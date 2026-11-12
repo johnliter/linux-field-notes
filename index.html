@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1017">
+  <meta name="description" content="A community-friendly, evidence-led library of Linux and Omarchy troubleshooting guides, commands, and verified fixes.">
+  <title>Linux Field Notes — Practical Troubleshooting Guides</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="guides.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <div class="container nav-content">
+      <a class="brand" href="#top" aria-label="Linux Field Notes home"><span class="brand-mark" aria-hidden="true">&gt;_</span><span>LINUX <strong>FIELD NOTES</strong></span></a>
+      <nav aria-label="Main navigation"><a href="#guides">Guides</a><a href="#approach">Our approach</a><a href="#contribute" class="nav-cta">Contribute <span aria-hidden="true">↗</span></a></nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="container hero-inner">
+        <div><div class="eyebrow"><span class="pulse"></span> DOCUMENTED IN THE FIELD <span class="eyebrow-rule"></span> FREE & OPEN TO READ</div>
+        <h1>When Linux breaks,<br><em>document the fix.</em></h1>
+        <p class="hero-copy">Real troubleshooting sessions, clear terminal commands, and practical recovery steps. Starting with Omarchy. Built to grow into a useful Linux repair library for everyone.</p>
+        <div class="hero-actions"><a href="#guides" class="button primary">Explore the guides <span aria-hidden="true">↗</span></a><a href="#approach" class="button secondary">How we verify fixes</a></div>
+        <div class="hero-meta"><span><span class="meta-dot"></span> Real-world case notes</span><span>Commands you can copy</span><span>Clear verification status</span></div>
+        </div>
+        <div class="terminal-visual" aria-label="Example terminal commands">
+          <div class="terminal-top"><span class="terminal-dots"><i></i><i></i><i></i></span><span>field-notes / recovery</span><span>● ● ●</span></div>
+          <div class="terminal-body"><p class="prompt">$ <span>omarchy-menu toggle</span></p><p class="error">omarchy-shell is not responding</p><p class="comment"># Check whether shell is alive</p><p class="prompt">$ <span>pgrep -af quickshell</span></p><p class="result">1596 quickshell -n -p /usr/share/omarchy/shell</p><p class="comment"># Recover the stuck shell</p><p class="prompt">$ <span>kill -TERM 1596</span></p><p class="success">✓ Menus responding again</p><p class="cursor-line">$ <span class="cursor"></span></p></div>
+          <div class="terminal-bottom"><span>CASE 001</span><span>OMARCHY / SHELL</span><span>RECOVERED</span></div>
+        </div>
+      </div>
+    </section>
+    <section class="numbers-bar"><div class="container numbers-inner"><div><strong id="guide-count">01</strong><span>Documented guides</span></div><div><strong id="confirmed-count">01</strong><span>Cases with confirmed recovery</span></div><div><strong>100%</strong><span>Free to access</span></div><div><strong>∞</strong><span>Room to grow</span></div></div></section>
+    <section id="guides" class="section guides-section"><div class="container">
+      <div class="section-heading"><div><div class="overline">THE KNOWLEDGE BASE / 001</div><h2>Troubleshooting guides</h2><p>Search by symptom, component, or command. Every guide distinguishes what was observed from what still needs investigation.</p></div><div class="small-label">FIELD-TESTED NOTES ↓</div></div>
+      <div class="toolbar"><label class="search-wrap"><span class="search-icon" aria-hidden="true">⌕</span><span class="sr-only">Search guides</span><input id="search" type="search" placeholder="Search guides, symptoms, commands…" autocomplete="off"><kbd>/</kbd></label><div class="filters" id="filters" aria-label="Filter by category"></div></div>
+      <div class="guide-grid" id="guide-list" aria-live="polite"></div><p id="no-results" class="no-results" hidden>No guides found. Try a different search or category.</p>
+      <div id="guide-detail" class="detail" hidden tabindex="-1"></div>
+    </div></section>
+    <section class="section approach-section" id="approach"><div class="container"><div class="overline">OUR PRINCIPLES</div><h2>No magic commands.<br><span>Just reproducible fixes.</span></h2><div class="principles"><article><span class="principle-index">01 /</span><h3>Symptoms first</h3><p>We describe what broke and what the machine actually reported before suggesting a change.</p></article><article><span class="principle-index">02 /</span><h3>Smallest safe change</h3><p>We prefer targeted recovery steps over system-wide resets, reinstallations, or deleting configuration files.</p></article><article><span class="principle-index">03 /</span><h3>Evidence over certainty</h3><p>We clearly distinguish a confirmed recovery from a suspected root cause, and note what remains untested.</p></article></div></div></section>
+    <section class="section contribute-section" id="contribute"><div class="container contribute-inner"><div><div class="overline">BUILT TO EXPAND</div><h2>Found another fix?</h2><p>This site is structured so each new issue can become a searchable guide. Add cases to <code>guides.js</code>, then redeploy your static files. No database or framework needed.</p></div><a class="button primary" href="https://github.com/new" target="_blank" rel="noopener noreferrer">Start a GitHub repository <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer><div class="container footer-inner"><span class="brand"><span class="brand-mark">&gt;_</span> LINUX <strong>FIELD NOTES</strong></span><p>Practical fixes. Honest documentation. Built for the community.</p><span>Independent troubleshooting resource · Not affiliated with Omarchy</span></div></footer>
+</body>
+</html>
