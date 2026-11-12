@@ -1,0 +1,84 @@
+name: Deploy static site to Hostinger
+
+# Manual-only until the Hostinger destination and credentials are verified.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hostinger-linux-field-notes
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HOST: ${{ secrets.HOSTINGER_SFTP_HOST }}
+      USERNAME: ${{ secrets.HOSTINGER_SFTP_USER }}
+      PRIVATE_KEY: ${{ secrets.HOSTINGER_SFTP_PRIVATE_KEY }}
+      KNOWN_HOSTS: ${{ secrets.HOSTINGER_SFTP_KNOWN_HOSTS }}
+      PORT: ${{ vars.HOSTINGER_SFTP_PORT }}
+      REMOTE_PATH: ${{ vars.HOSTINGER_DEPLOY_PATH }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate required configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in HOST USERNAME PRIVATE_KEY KNOWN_HOSTS REMOTE_PATH; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Missing required setting: $name"
+              exit 1
+            fi
+          done
+          if [[ "$REMOTE_PATH" == "/" || "$REMOTE_PATH" == "." || "$REMOTE_PATH" == ".." ]]; then
+            echo "::error::Refusing an unsafe remote deployment path"
+            exit 1
+          fi
+          if [[ ! "$REMOTE_PATH" =~ ^[A-Za-z0-9_./-]+$ || "$REMOTE_PATH" == *".."* ]]; then
+            echo "::error::Remote path contains unsupported characters"
+            exit 1
+          fi
+          echo "Hostinger settings are present. Deploying only website assets."
+
+      - name: Prepare static assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp index.html styles.css app.js guides.js dist/
+          test -s dist/index.html
+
+      - name: Install SFTP client
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Configure verified SSH host and key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh"
+          printf '%s\n' "$PRIVATE_KEY" > "$HOME/.ssh/hostinger_deploy_key"
+          chmod 600 "$HOME/.ssh/hostinger_deploy_key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+          ssh-keygen -y -f "$HOME/.ssh/hostinger_deploy_key" >/dev/null
+
+      - name: Upload static site via SFTP (no remote deletions)
+        shell: bash
+        run: |
+          set -euo pipefail
+          export LFTP_PASSWORD=''
+          ssh_port="${PORT:-22}"
+          [[ "$ssh_port" =~ ^[0-9]{1,5}$ ]] || { echo "::error::Invalid SFTP port"; exit 1; }
+          lftp -u "$USERNAME" "sftp://$HOST" -e "
+            set cmd:fail-exit yes;
+            set net:max-retries 2;
+            set sftp:connect-program \"ssh -a -x -i $HOME/.ssh/hostinger_deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p $ssh_port\";
+            mirror --reverse --verbose --no-perms ./dist/ \"$REMOTE_PATH\";
+            bye
+          "
